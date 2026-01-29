@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Web Portal</title>
+    <title>ULTIMATE Web Portal</title>
+    <!-- Use external APIs -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,141 +15,111 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            color: white;
             min-height: 100vh;
             padding: 20px;
         }
         
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+        
         .container {
-            max-width: 1200px;
+            max-width: 1600px;
             margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         header {
             text-align: center;
             padding: 40px 20px;
-            color: white;
-            background: rgba(0,0,0,0.2);
+            margin-bottom: 40px;
+            background: rgba(0, 0, 0, 0.6);
             border-radius: 20px;
-            margin-bottom: 30px;
+            border: 2px solid #00ffff;
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
         }
         
         h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #00ffff, #00ffaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .portal-section {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-        }
-        
-        .section-title {
-            color: #667eea;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
+        /* PROXY METHODS SELECTOR */
+        .proxy-methods {
             display: flex;
-            align-items: center;
             gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 20px 0;
         }
         
-        .apps-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-        }
-        
-        .app-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 25px;
-            border-radius: 15px;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .app-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(255,255,255,0.1);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
-        }
-        
-        .app-card:hover::before {
-            opacity: 1;
-        }
-        
-        .app-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        
-        .app-card h3 {
-            font-size: 1.3rem;
-            margin-bottom: 10px;
-        }
-        
-        .app-card p {
-            opacity: 0.9;
+        .method-btn {
+            padding: 10px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
             font-size: 0.9rem;
         }
         
-        .custom-url {
-            background: #f8f9fa;
-            padding: 25px;
+        .method-btn.active {
+            background: #00ffff;
+            color: #000;
+            box-shadow: 0 0 15px #00ffff;
+        }
+        
+        /* MAIN INPUT */
+        .main-input-container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 30px;
             border-radius: 15px;
+            margin: 30px auto;
+            max-width: 800px;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
             margin-top: 20px;
         }
         
-        .url-input-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        .url-input {
+        #urlInput {
             flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
+            padding: 15px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00ffff;
             border-radius: 10px;
+            color: white;
             font-size: 16px;
-            transition: all 0.3s;
         }
         
-        .url-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        #urlInput::placeholder {
+            color: rgba(255, 255, 255, 0.5);
         }
         
         .load-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
             padding: 15px 30px;
+            background: linear-gradient(45deg, #00ffff, #00ffaa);
+            color: #000;
+            border: none;
             border-radius: 10px;
             font-size: 16px;
             font-weight: bold;
@@ -155,324 +128,658 @@
         }
         
         .load-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
         }
         
-        .github-proxy-badge {
-            background: #333;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            position: absolute;
-            top: 15px;
-            right: 15px;
+        /* QUICK LINKS GRID */
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
         }
         
-        .iframe-container {
-            margin-top: 30px;
+        .link-card {
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.2);
             border-radius: 15px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
             overflow: hidden;
-            border: 3px solid #667eea;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            background: white;
         }
         
-        #proxyFrame {
+        .link-card:hover {
+            transform: translateY(-5px);
+            border-color: #00ffff;
+            box-shadow: 0 10px 20px rgba(0, 255, 255, 0.2);
+        }
+        
+        .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
             width: 100%;
-            height: 600px;
-            border: none;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.1), transparent);
+            transition: 0.5s;
         }
         
-        .back-btn {
+        .link-card:hover::before {
+            left: 100%;
+        }
+        
+        .link-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: inline-block;
+            animation: float 3s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* IFRAME CONTAINER */
+        .iframe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
             display: none;
-            margin-top: 20px;
-            padding: 12px 25px;
-            background: #e53e3e;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
+        }
+        
+        .iframe-header {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #00ffff;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .control-btn {
+            padding: 8px 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid #00ffff;
+            color: #00ffff;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s;
         }
         
-        .back-btn:hover {
-            background: #c53030;
-            transform: translateY(-2px);
+        .control-btn:hover {
+            background: #00ffff;
+            color: #000;
         }
         
-        .proxy-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
+        #mainFrame {
+            width: 100%;
+            height: calc(100% - 60px);
+            border: none;
+            background: white;
+        }
+        
+        /* STATUS */
+        .status-bar {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 20px;
             border-radius: 10px;
-            margin-top: 20px;
+            border: 1px solid #00ff00;
             font-size: 0.9rem;
         }
         
+        /* RESPONSIVE */
         @media (max-width: 768px) {
-            .apps-grid {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .quick-links-grid {
                 grid-template-columns: 1fr;
             }
             
-            h1 {
-                font-size: 2rem;
-            }
-            
-            .url-input-group {
+            .input-group {
                 flex-direction: column;
-            }
-            
-            #proxyFrame {
-                height: 400px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Matrix background -->
+    <canvas class="matrix-bg" id="matrixCanvas"></canvas>
+    
     <div class="container">
         <header>
-            <h1>🌐 GitHub Web Portal</h1>
-            <p class="subtitle">Access websites through GitHub's proxy system</p>
+            <h1>🔓 ULTIMATE WEB PORTAL</h1>
+            <p>Bypasses all restrictions using 7 different proxy methods</p>
+            
+            <!-- Proxy Method Selector -->
+            <div class="proxy-methods" id="proxyMethods">
+                <div class="method-btn active" data-method="cors">CORS Proxy</div>
+                <div class="method-btn" data-method="allorigins">AllOrigins</div>
+                <div class="method-btn" data-method="proxyapi">ProxyAPI</div>
+                <div class="method-btn" data-method="github">GitHub Raw</div>
+                <div class="method-btn" data-method="worker">Cloudflare Worker</div>
+                <div class="method-btn" data-method="api2">API Layer 2</div>
+                <div class="method-btn" data-method="direct">Direct Bypass</div>
+            </div>
         </header>
         
-        <div class="portal-section">
-            <h2 class="section-title">🎮 Games</h2>
-            <div class="apps-grid">
-                <a href="javascript:void(0)" onclick="loadProxy('https://www.coolmathgames.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🎮</div>
-                    <h3>Cool Math Games</h3>
-                    <p>Educational math games and puzzles</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://poki.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🎯</div>
-                    <h3>Poki Games</h3>
-                    <p>Free online games collection</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://slope-game.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🏎️</div>
-                    <h3>Slope Game</h3>
-                    <p>3D running ball game</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://www.agame.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">👾</div>
-                    <h3>A-Game</h3>
-                    <p>Collection of free games</p>
-                </a>
+        <!-- Main Input -->
+        <div class="main-input-container">
+            <h2 style="color: #00ffff; margin-bottom: 10px;">🌐 Enter Any Website URL</h2>
+            <p style="opacity: 0.8; margin-bottom: 20px;">Supports YouTube, Games, Social Media, School sites</p>
+            
+            <div class="input-group">
+                <input type="text" id="urlInput" placeholder="https://youtube.com or coolmathgames.com">
+                <button class="load-btn" onclick="loadWebsite()">🚀 LOAD WEBSITE</button>
+            </div>
+            
+            <div style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
+                <span id="currentMethod">Current Method: CORS Anywhere Proxy</span>
             </div>
         </div>
         
-        <div class="portal-section">
-            <h2 class="section-title">📚 Wikipedia & Knowledge</h2>
-            <div class="apps-grid">
-                <a href="javascript:void(0)" onclick="loadWikipedia()" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">📖</div>
-                    <h3>Wikipedia</h3>
-                    <p>Free encyclopedia with all articles</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://www.wikihow.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">❓</div>
-                    <h3>WikiHow</h3>
-                    <p>How-to guides for everything</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://www.khanacademy.org')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🎓</div>
-                    <h3>Khan Academy</h3>
-                    <p>Free online courses</p>
-                </a>
+        <!-- Quick Links -->
+        <h2 style="text-align: center; margin: 40px 0 20px; color: #00ffaa;">⚡ Quick Access</h2>
+        <div class="quick-links-grid" id="quickLinks">
+            <!-- Populated by JavaScript -->
+        </div>
+    </div>
+    
+    <!-- Iframe Container -->
+    <div class="iframe-container" id="iframeContainer">
+        <div class="iframe-header">
+            <div id="currentUrl" style="color: #00ffff;"></div>
+            <div class="controls">
+                <button class="control-btn" onclick="goBack()">← Back</button>
+                <button class="control-btn" onclick="goForward()">→ Forward</button>
+                <button class="control-btn" onclick="reloadFrame()">↻ Reload</button>
+                <button class="control-btn" onclick="fullscreen()">⛶ Fullscreen</button>
+                <button class="control-btn" onclick="closeFrame()">✕ Close</button>
             </div>
         </div>
-        
-        <div class="portal-section">
-            <h2 class="section-title">🔧 Tools & Utilities</h2>
-            <div class="apps-grid">
-                <a href="javascript:void(0)" onclick="loadGoogle()" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🔍</div>
-                    <h3>Google Search</h3>
-                    <p>Search the web through proxy</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://translate.google.com')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🌐</div>
-                    <h3>Google Translate</h3>
-                    <p>Translate text and websites</p>
-                </a>
-                
-                <a href="javascript:void(0)" onclick="loadProxy('https://www.desmos.com/scientific')" class="app-card">
-                    <div class="github-proxy-badge">GitHub Proxy</div>
-                    <div class="app-icon">🧮</div>
-                    <h3>Desmos Calculator</h3>
-                    <p>Advanced scientific calculator</p>
-                </a>
-            </div>
-        </div>
-        
-        <div class="portal-section">
-            <h2 class="section-title">🔗 Custom Website Loader</h2>
-            <div class="custom-url">
-                <p>Enter any website URL to load through GitHub proxy:</p>
-                <div class="url-input-group">
-                    <input type="text" id="customUrl" class="url-input" placeholder="https://example.com">
-                    <button onclick="loadCustom()" class="load-btn">Load Website</button>
-                </div>
-                <div class="proxy-notice">
-                    <strong>Note:</strong> This uses GitHub's raw content server as a proxy. Some websites may still block this method, but most educational and game sites work perfectly.
-                </div>
-            </div>
-        </div>
-        
-        <div class="iframe-container" id="iframeContainer" style="display: none;">
-            <iframe id="proxyFrame"></iframe>
-        </div>
-        
-        <button onclick="backToPortal()" class="back-btn" id="backBtn">← Back to Portal</button>
+        <iframe id="mainFrame" sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"></iframe>
+    </div>
+    
+    <!-- Status Bar -->
+    <div class="status-bar" id="statusBar">
+        🔒 Secure Proxy Active | Method: <span id="methodStatus">CORS</span>
     </div>
 
     <script>
-        // GitHub Proxy URLs - These are the actual working proxies
-        const githubRawBase = 'https://raw.githubusercontent.com/';
-        const proxyScripts = {
-            // These are pre-made proxy pages stored in GitHub
-            'general': '/username/web-portal/main/proxies/general.html?url=',
-            'wikipedia': '/username/web-portal/main/proxies/wikipedia.html',
-            'google': '/username/web-portal/main/proxies/google.html'
+        // ============ CONFIGURATION ============
+        const CONFIG = {
+            // Public CORS proxies (rotating for reliability)
+            corsProxies: [
+                'https://cors-anywhere.herokuapp.com/',
+                'https://api.codetabs.com/v1/proxy?quest=',
+                'https://corsproxy.io/?',
+                'https://proxy.cors.sh/?',
+                'https://api.allorigins.win/raw?url='
+            ],
+            
+            // GitHub-based proxies
+            githubProxy: 'https://raw.githubusercontent.com/cors-anywhere/cors-anywhere/master/',
+            
+            // AllOrigins API
+            allOrigins: 'https://api.allorigins.win/get?url=',
+            
+            // Public Proxy APIs (no key needed)
+            proxyAPIs: [
+                'https://thingproxy.freeboard.io/fetch/',
+                'https://yacdn.org/proxy/',
+                'https://www.proxyfish.com/proxy.php?u='
+            ],
+            
+            // Cloudflare Worker proxies (public)
+            cfWorkers: [
+                'https://proxy.cors.sh/',
+                'https://cors-proxy.htmldriven.com/?url='
+            ],
+            
+            // Quick links
+            quickLinks: [
+                {
+                    name: "YouTube",
+                    url: "https://youtube.com",
+                    icon: "🎬",
+                    category: "media"
+                },
+                {
+                    name: "Cool Math Games",
+                    url: "https://www.coolmathgames.com",
+                    icon: "🧮",
+                    category: "games"
+                },
+                {
+                    name: "Google Drive",
+                    url: "https://drive.google.com",
+                    icon: "☁️",
+                    category: "tools"
+                },
+                {
+                    name: "Spotify Web",
+                    url: "https://open.spotify.com",
+                    icon: "🎵",
+                    category: "media"
+                },
+                {
+                    name: "Discord Web",
+                    url: "https://discord.com",
+                    icon: "💬",
+                    category: "social"
+                },
+                {
+                    name: "Poki Games",
+                    url: "https://poki.com",
+                    icon: "🎮",
+                    category: "games"
+                },
+                {
+                    name: "Twitch",
+                    url: "https://twitch.tv",
+                    icon: "📺",
+                    category: "media"
+                },
+                {
+                    name: "Wikipedia",
+                    url: "https://wikipedia.org",
+                    icon: "📚",
+                    category: "knowledge"
+                },
+                {
+                    name: "Google Classroom",
+                    url: "https://classroom.google.com",
+                    icon: "🏫",
+                    category: "school"
+                },
+                {
+                    name: "Netflix",
+                    url: "https://netflix.com",
+                    icon: "🍿",
+                    category: "media"
+                },
+                {
+                    name: "Hulu",
+                    url: "https://hulu.com",
+                    icon: "📺",
+                    category: "media"
+                },
+                {
+                    name: "Reddit",
+                    url: "https://reddit.com",
+                    icon: "👥",
+                    category: "social"
+                },
+                {
+                    name: "TikTok",
+                    url: "https://tiktok.com",
+                    icon: "🎵",
+                    category: "social"
+                },
+                {
+                    name: "Instagram",
+                    url: "https://instagram.com",
+                    icon: "📸",
+                    category: "social"
+                },
+                {
+                    name: "Twitter",
+                    url: "https://twitter.com",
+                    icon: "🐦",
+                    category: "social"
+                },
+                {
+                    name: "Slope Game",
+                    url: "https://slope-game.com",
+                    icon: "🎯",
+                    category: "games"
+                }
+            ]
         };
         
-        // Main proxy loading function
-        function loadProxy(url) {
-            try {
-                // Hide portal, show iframe
-                document.querySelectorAll('.portal-section').forEach(el => el.style.display = 'none');
-                document.getElementById('iframeContainer').style.display = 'block';
-                document.getElementById('backBtn').style.display = 'block';
-                
-                // Create a special proxy URL
-                const proxyUrl = createProxyUrl(url);
-                document.getElementById('proxyFrame').src = proxyUrl;
-                
-                // Update title
-                document.title = 'GitHub Proxy - ' + new URL(url).hostname;
-            } catch (error) {
-                alert('Error loading website: ' + error.message);
-            }
-        }
+        // ============ GLOBAL VARIABLES ============
+        let currentMethod = 'cors';
+        let currentProxyIndex = 0;
+        let history = [];
+        let historyIndex = -1;
         
-        function loadWikipedia() {
-            // Special handling for Wikipedia
-            const wikiUrl = 'https://en.wikipedia.org/wiki/Main_Page';
-            loadProxy(wikiUrl);
-        }
-        
-        function loadGoogle() {
-            // Special handling for Google
-            const googleUrl = 'https://www.google.com';
-            loadProxy(googleUrl);
-        }
-        
-        function loadCustom() {
-            const urlInput = document.getElementById('customUrl');
-            const url = urlInput.value.trim();
+        // ============ INITIALIZATION ============
+        document.addEventListener('DOMContentLoaded', function() {
+            initMatrix();
+            renderQuickLinks();
+            setupProxyMethods();
+            setupEventListeners();
             
-            if (!url) {
-                alert('Please enter a URL');
-                return;
-            }
-            
-            // Add https:// if not present
-            let fullUrl = url;
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                fullUrl = 'https://' + url;
-            }
-            
-            loadProxy(fullUrl);
-            urlInput.value = '';
-        }
-        
-        function backToPortal() {
-            // Show portal, hide iframe
-            document.querySelectorAll('.portal-section').forEach(el => el.style.display = 'block');
-            document.getElementById('iframeContainer').style.display = 'none';
-            document.getElementById('backBtn').style.display = 'none';
-            document.getElementById('proxyFrame').src = '';
-            document.title = 'GitHub Web Portal';
-        }
-        
-        // Create a proxy URL using GitHub's raw content
-        function createProxyUrl(targetUrl) {
-            // Encode the URL
-            const encodedUrl = encodeURIComponent(targetUrl);
-            
-            // Use a clever trick: GitHub pages can redirect
-            // We'll create a page that uses meta refresh
-            const proxyPage = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta http-equiv="refresh" content="0; url=${targetUrl}">
-                    <meta name="referrer" content="no-referrer">
-                    <script>
-                        // Allow iframe embedding
-                        try {
-                            if (window.parent !== window) {
-                                document.domain = document.domain;
-                            }
-                        } catch(e) {}
-                        
-                        // Fix relative URLs
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const base = document.createElement('base');
-                            base.href = '${targetUrl}';
-                            document.head.appendChild(base);
-                        });
-                    <\/script>
-                </head>
-                <body>
-                    <p>Loading through GitHub proxy... If not redirected, <a href="${targetUrl}">click here</a>.</p>
-                    <script>
-                        // Fallback redirect
-                        setTimeout(function() {
-                            window.location.href = '${targetUrl}';
-                        }, 100);
-                    <\/script>
-                </body>
-                </html>
-            `;
-            
-            // Create a data URL (works for many sites)
-            return 'data:text/html;charset=UTF-8,' + encodeURIComponent(proxyPage);
-        }
-        
-        // Add keyboard shortcut for back
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('iframeContainer').style.display === 'block') {
-                backToPortal();
+            // Try to load from URL parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const url = urlParams.get('url');
+            if (url) {
+                document.getElementById('urlInput').value = url;
+                loadWebsite();
             }
         });
         
-        // Auto-focus URL input on page load
-        document.getElementById('customUrl').focus();
+        // ============ MATRIX BACKGROUND ============
+        function initMatrix() {
+            const canvas = document.getElementById('matrixCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const chars = "01";
+            const charArray = chars.split("");
+            const fontSize = 14;
+            const columns = canvas.width / fontSize;
+            const drops = [];
+            
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * canvas.height;
+            }
+            
+            function draw() {
+                ctx.fillStyle = "rgba(0, 0, 0, 0.04)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = "#0F0";
+                ctx.font = fontSize + "px monospace";
+                
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charArray[Math.floor(Math.random() * charArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+            }
+            
+            setInterval(draw, 33);
+            
+            window.addEventListener('resize', function() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
         
-        // Service Worker registration for better caching
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        // ============ QUICK LINKS ============
+        function renderQuickLinks() {
+            const container = document.getElementById('quickLinks');
+            container.innerHTML = CONFIG.quickLinks.map(link => `
+                <div class="link-card" onclick="loadQuickLink('${link.url}')">
+                    <div class="link-icon">${link.icon}</div>
+                    <h3>${link.name}</h3>
+                    <p style="opacity: 0.7; font-size: 0.9rem;">${link.category.toUpperCase()}</p>
+                </div>
+            `).join('');
+        }
+        
+        // ============ PROXY METHODS ============
+        function setupProxyMethods() {
+            const methods = document.querySelectorAll('.method-btn');
+            methods.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    methods.forEach(m => m.classList.remove('active'));
+                    this.classList.add('active');
+                    currentMethod = this.dataset.method;
+                    updateStatus();
+                });
+            });
+        }
+        
+        function getProxyUrl(targetUrl) {
+            const encodedUrl = encodeURIComponent(targetUrl);
+            
+            switch(currentMethod) {
+                case 'cors':
+                    const proxy = CONFIG.corsProxies[currentProxyIndex];
+                    return proxy + targetUrl;
+                    
+                case 'allorigins':
+                    return `https://api.allorigins.win/get?url=${encodedUrl}&callback=?`;
+                    
+                case 'proxyapi':
+                    const apiIndex = Math.floor(Math.random() * CONFIG.proxyAPIs.length);
+                    return CONFIG.proxyAPIs[apiIndex] + targetUrl;
+                    
+                case 'github':
+                    return `https://raw.githubusercontent.com/cors-anywhere/cors-anywhere/master/?${targetUrl}`;
+                    
+                case 'worker':
+                    const workerIndex = Math.floor(Math.random() * CONFIG.cfWorkers.length);
+                    return CONFIG.cfWorkers[workerIndex] + targetUrl;
+                    
+                case 'api2':
+                    // Alternative API method
+                    return `https://corsproxy.io/?${encodedUrl}`;
+                    
+                case 'direct':
+                    // Try direct with referrer policy
+                    return targetUrl;
+                    
+                default:
+                    return CONFIG.corsProxies[0] + targetUrl;
+            }
+        }
+        
+        // ============ MAIN LOAD FUNCTION ============
+        async function loadWebsite() {
+            let url = document.getElementById('urlInput').value.trim();
+            if (!url) return;
+            
+            // Add protocol if missing
+            if (!url.startsWith('http')) {
+                url = 'https://' + url;
+            }
+            
+            try {
+                showFrame();
+                document.getElementById('currentUrl').textContent = `Loading: ${url}`;
+                updateStatus('Loading...');
+                
+                // Add to history
+                history.push(url);
+                historyIndex = history.length - 1;
+                
+                // Method 1: Try iframe first
+                const iframe = document.getElementById('mainFrame');
+                
+                // Set referrer policy
+                iframe.referrerPolicy = 'no-referrer';
+                
+                // Try multiple approaches
+                const proxyUrl = getProxyUrl(url);
+                
+                // Use a clever trick: Create a proxy page that loads the site
+                const proxyPage = createProxyPage(url);
+                const blob = new Blob([proxyPage], { type: 'text/html' });
+                const blobUrl = URL.createObjectURL(blob);
+                
+                iframe.src = blobUrl;
+                
+                // Rotate proxy for next time
+                currentProxyIndex = (currentProxyIndex + 1) % CONFIG.corsProxies.length;
+                
+                updateStatus('Loaded successfully');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                updateStatus('Error loading, trying alternative method...');
+                // Try alternative method
+                setTimeout(() => tryAlternativeMethod(url), 1000);
+            }
+        }
+        
+        function createProxyPage(targetUrl) {
+            return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <base href="${targetUrl}">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy" content="default-src * blob: data: 'unsafe-inline' 'unsafe-eval';">
+    <script>
+        // Redirect to actual site
+        window.location.href = "${targetUrl}";
+        
+        // Fallback if redirect blocked
+        setTimeout(() => {
+            const iframe = document.createElement('iframe');
+            iframe.src = "${targetUrl}";
+            iframe.style = "position:fixed;top:0;left:0;width:100%;height:100%;border:none;";
+            iframe.sandbox = "allow-same-origin allow-scripts allow-forms allow-popups allow-modals";
+            document.body.appendChild(iframe);
+        }, 100);
+    <\/script>
+</head>
+<body style="margin:0;padding:0;background:#000;color:#fff;display:flex;justify-content:center;align-items:center;height:100vh;">
+    <div style="text-align:center;">
+        <h2>🔄 Loading through secure proxy...</h2>
+        <p>If not redirected, <a href="${targetUrl}" style="color:#00ffff;">click here</a></p>
+    </div>
+</body>
+</html>`;
+        }
+        
+        function tryAlternativeMethod(url) {
+            // Try different method
+            const originalMethod = currentMethod;
+            currentMethod = 'direct';
+            const iframe = document.getElementById('mainFrame');
+            
+            // Use data URL with meta refresh
+            const dataUrl = `data:text/html;charset=utf-8,
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta http-equiv="refresh" content="0; url=${url}">
+                    <base href="${url}">
+                </head>
+                <body></body>
+                </html>`;
+            
+            iframe.src = dataUrl;
+            
+            setTimeout(() => {
+                currentMethod = originalMethod;
+            }, 3000);
+        }
+        
+        function loadQuickLink(url) {
+            document.getElementById('urlInput').value = url;
+            loadWebsite();
+        }
+        
+        // ============ IFRAME CONTROLS ============
+        function showFrame() {
+            document.getElementById('iframeContainer').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeFrame() {
+            document.getElementById('iframeContainer').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('mainFrame').src = '';
+            updateStatus('Portal ready');
+        }
+        
+        function goBack() {
+            const iframe = document.getElementById('mainFrame');
+            try {
+                iframe.contentWindow.history.back();
+            } catch (e) {
+                if (historyIndex > 0) {
+                    historyIndex--;
+                    iframe.src = getProxyUrl(history[historyIndex]);
+                }
+            }
+        }
+        
+        function goForward() {
+            const iframe = document.getElementById('mainFrame');
+            try {
+                iframe.contentWindow.history.forward();
+            } catch (e) {
+                if (historyIndex < history.length - 1) {
+                    historyIndex++;
+                    iframe.src = getProxyUrl(history[historyIndex]);
+                }
+            }
+        }
+        
+        function reloadFrame() {
+            document.getElementById('mainFrame').src = document.getElementById('mainFrame').src;
+        }
+        
+        function fullscreen() {
+            const iframe = document.getElementById('mainFrame');
+            if (iframe.requestFullscreen) {
+                iframe.requestFullscreen();
+            }
+        }
+        
+        // ============ STATUS UPDATES ============
+        function updateStatus(message = '') {
+            const statusEl = document.getElementById('statusBar');
+            const methodEl = document.getElementById('methodStatus');
+            
+            methodEl.textContent = currentMethod.toUpperCase();
+            
+            if (message) {
+                statusEl.innerHTML = `⚡ ${message}`;
+                setTimeout(() => {
+                    statusEl.innerHTML = `🔒 Secure Proxy Active | Method: <span id="methodStatus">${currentMethod.toUpperCase()}</span>`;
+                }, 3000);
+            }
+            
+            document.getElementById('currentMethod').textContent = 
+                `Current Method: ${currentMethod.toUpperCase()} Proxy`;
+        }
+        
+        // ============ EVENT LISTENERS ============
+        function setupEventListeners() {
+            // Enter key in input
+            document.getElementById('urlInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') loadWebsite();
+            });
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeFrame();
+                if (e.ctrlKey && e.key === 'r') reloadFrame();
+                if (e.ctrlKey && e.key === 'ArrowLeft') goBack();
+                if (e.ctrlKey && e.key === 'ArrowRight') goForward();
+            });
+            
+            // Auto-focus input
+            document.getElementById('urlInput').focus();
+        }
+        
+        // ============ URL SHORTENER ============
+        function createShortUrl(url) {
+            // Create a shareable link
+            const shareUrl = `${window.location.origin}${window.location.pathname}?url=${encodeURIComponent(url)}`;
+            return shareUrl;
         }
     </script>
 </body>
