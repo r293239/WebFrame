@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Website Frame Loader</title>
+  <title>Game Loader</title>
+
   <style>
     body {
       margin: 0;
@@ -16,14 +17,14 @@
     }
 
     button {
+      padding: 8px 14px;
       margin-right: 8px;
-      padding: 6px 12px;
       cursor: pointer;
     }
 
     iframe {
       width: 100%;
-      height: calc(100vh - 50px);
+      height: calc(100vh - 52px);
       border: none;
     }
   </style>
@@ -32,16 +33,21 @@
 
   <div class="controls">
     <button onclick="loadSite('https://example.com')">Example</button>
-    <button onclick="loadSite('https://wikipedia.org')">Wikipedia</button>
     <button onclick="loadSite('https://r293239.github.io/Geodle/')">Geodle</button>
-     <button onclick="loadSite('https://www.crazygames.com')">Games</button>
+    <button onclick="loadSite('https://www.crazygames.com/embed/ragdoll-archers')">
+      CrazyGame 🎮
+    </button>
   </div>
 
-  <iframe id="frame" src="https://example.com"></iframe>
+  <iframe
+    id="frame"
+    src="https://example.com"
+    allow="fullscreen; gamepad *;">
+  </iframe>
 
   <script>
     function loadSite(url) {
-      document.getElementById('frame').src = url;
+      document.getElementById("frame").src = url;
     }
   </script>
 
