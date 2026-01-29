@@ -1,0 +1,17 @@
+title: Ultimate Web Portal
+description: Bypass all restrictions with 7 proxy methods
+baseurl: ""
+url: "https://yourusername.github.io"
+permalink: pretty
+
+plugins:
+  - jekyll-seo-tag
+
+# Enable CORS
+cors:
+  enabled: true
+
+# Security headers
+security_headers:
+  Content-Security-Policy: "default-src * data: blob: 'unsafe-inline' 'unsafe-eval'"
+  Access-Control-Allow-Origin: "*"
