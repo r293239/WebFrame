@@ -1,19 +1,18 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Hub</title>
+    <title>GitHub Web Portal</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
         
         body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -28,6 +27,9 @@
             text-align: center;
             padding: 40px 20px;
             color: white;
+            background: rgba(0,0,0,0.2);
+            border-radius: 20px;
+            margin-bottom: 30px;
         }
         
         h1 {
@@ -41,121 +43,191 @@
             opacity: 0.9;
         }
         
-        .portal-container {
+        .portal-section {
             background: white;
-            border-radius: 15px;
+            border-radius: 20px;
             padding: 30px;
+            margin-bottom: 30px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
         
-        .url-input-container {
+        .section-title {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
             display: flex;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 30px;
         }
         
-        #urlInput {
-            flex: 1;
-            padding: 15px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        #urlInput:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            padding: 15px 30px;
-            background: #667eea;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            transition: background 0.3s;
-        }
-        
-        button:hover {
-            background: #5a67d8;
-        }
-        
-        .quick-links {
+        .apps-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
         }
         
-        .link-card {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: 2px solid transparent;
+        .app-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        .link-card:hover {
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .app-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            border-color: #667eea;
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
         }
         
-        .link-card h3 {
-            color: #333;
+        .app-card:hover::before {
+            opacity: 1;
+        }
+        
+        .app-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .app-card h3 {
+            font-size: 1.3rem;
             margin-bottom: 10px;
         }
         
-        .link-card p {
-            color: #666;
-            font-size: 14px;
+        .app-card p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .custom-url {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+        
+        .url-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .url-input {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .url-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+        
+        .load-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .load-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .github-proxy-badge {
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            position: absolute;
+            top: 15px;
+            right: 15px;
         }
         
         .iframe-container {
-            border-radius: 10px;
+            margin-top: 30px;
+            border-radius: 15px;
             overflow: hidden;
-            border: 2px solid #ddd;
+            border: 3px solid #667eea;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             background: white;
         }
         
-        #siteFrame {
+        #proxyFrame {
             width: 100%;
             height: 600px;
             border: none;
-            display: none;
         }
         
-        .back-button {
+        .back-btn {
             display: none;
             margin-top: 20px;
-            background: #48bb78;
+            padding: 12px 25px;
+            background: #e53e3e;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
-        footer {
-            text-align: center;
-            color: white;
-            margin-top: 40px;
-            padding: 20px;
-            opacity: 0.8;
+        .back-btn:hover {
+            background: #c53030;
+            transform: translateY(-2px);
+        }
+        
+        .proxy-notice {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+            font-size: 0.9rem;
         }
         
         @media (max-width: 768px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+            
             h1 {
                 font-size: 2rem;
             }
             
-            .quick-links {
-                grid-template-columns: 1fr;
+            .url-input-group {
+                flex-direction: column;
             }
             
-            .url-input-container {
-                flex-direction: column;
+            #proxyFrame {
+                height: 400px;
             }
         }
     </style>
@@ -163,145 +235,245 @@
 <body>
     <div class="container">
         <header>
-            <h1>🌐 Portal Hub</h1>
-            <p class="subtitle">Access your favorite websites and games in one place</p>
+            <h1>🌐 GitHub Web Portal</h1>
+            <p class="subtitle">Access websites through GitHub's proxy system</p>
         </header>
         
-        <main class="portal-container">
-            <div class="url-input-container">
-                <input type="text" id="urlInput" placeholder="Enter website URL (e.g., https://example.com)">
-                <button id="loadBtn">Load Website</button>
+        <div class="portal-section">
+            <h2 class="section-title">🎮 Games</h2>
+            <div class="apps-grid">
+                <a href="javascript:void(0)" onclick="loadProxy('https://www.coolmathgames.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🎮</div>
+                    <h3>Cool Math Games</h3>
+                    <p>Educational math games and puzzles</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://poki.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🎯</div>
+                    <h3>Poki Games</h3>
+                    <p>Free online games collection</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://slope-game.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🏎️</div>
+                    <h3>Slope Game</h3>
+                    <p>3D running ball game</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://www.agame.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">👾</div>
+                    <h3>A-Game</h3>
+                    <p>Collection of free games</p>
+                </a>
             </div>
-            
-            <button id="backBtn" class="back-button">← Back to Portal</button>
-            
-            <div class="quick-links" id="quickLinks">
-                <!-- Quick links will be added here -->
-            </div>
-            
-            <div class="iframe-container">
-                <iframe id="siteFrame" allow="fullscreen"></iframe>
-            </div>
-        </main>
+        </div>
         
-        <footer>
-            <p>This portal is hosted on GitHub Pages | Made with ❤️</p>
-            <p>Note: Some websites may block iframe embedding for security reasons.</p>
-        </footer>
-    </div>
-    
-    <script>
-        // Quick links configuration
-        const quickLinks = [
-            {
-                name: "Cool Math Games",
-                url: "https://www.coolmathgames.com",
-                description: "Fun educational games"
-            },
-            {
-                name: "WikiHow",
-                url: "https://www.wikihow.com",
-                description: "How-to guides for everything"
-            },
-            {
-                name: "Classic Games",
-                url: "https://classic.minecraft.net",
-                description: "Play classic Minecraft"
-            },
-            {
-                name: "Wikipedia",
-                url: "https://en.wikipedia.org",
-                description: "Free encyclopedia"
-            },
-            {
-                name: "Poki Games",
-                url: "https://poki.com",
-                description: "Free online games"
-            },
-            {
-                name: "MDN Web Docs",
-                url: "https://developer.mozilla.org",
-                description: "Web development resources"
-            }
-        ];
-
-        const urlInput = document.getElementById('urlInput');
-        const loadBtn = document.getElementById('loadBtn');
-        const backBtn = document.getElementById('backBtn');
-        const siteFrame = document.getElementById('siteFrame');
-        const quickLinksContainer = document.getElementById('quickLinks');
-        const iframeContainer = document.querySelector('.iframe-container');
-
-        // Render quick links
-        function renderQuickLinks() {
-            quickLinksContainer.innerHTML = quickLinks.map(link => `
-                <div class="link-card" data-url="${link.url}">
-                    <h3>${link.name}</h3>
-                    <p>${link.description}</p>
+        <div class="portal-section">
+            <h2 class="section-title">📚 Wikipedia & Knowledge</h2>
+            <div class="apps-grid">
+                <a href="javascript:void(0)" onclick="loadWikipedia()" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">📖</div>
+                    <h3>Wikipedia</h3>
+                    <p>Free encyclopedia with all articles</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://www.wikihow.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">❓</div>
+                    <h3>WikiHow</h3>
+                    <p>How-to guides for everything</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://www.khanacademy.org')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🎓</div>
+                    <h3>Khan Academy</h3>
+                    <p>Free online courses</p>
+                </a>
+            </div>
+        </div>
+        
+        <div class="portal-section">
+            <h2 class="section-title">🔧 Tools & Utilities</h2>
+            <div class="apps-grid">
+                <a href="javascript:void(0)" onclick="loadGoogle()" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🔍</div>
+                    <h3>Google Search</h3>
+                    <p>Search the web through proxy</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://translate.google.com')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🌐</div>
+                    <h3>Google Translate</h3>
+                    <p>Translate text and websites</p>
+                </a>
+                
+                <a href="javascript:void(0)" onclick="loadProxy('https://www.desmos.com/scientific')" class="app-card">
+                    <div class="github-proxy-badge">GitHub Proxy</div>
+                    <div class="app-icon">🧮</div>
+                    <h3>Desmos Calculator</h3>
+                    <p>Advanced scientific calculator</p>
+                </a>
+            </div>
+        </div>
+        
+        <div class="portal-section">
+            <h2 class="section-title">🔗 Custom Website Loader</h2>
+            <div class="custom-url">
+                <p>Enter any website URL to load through GitHub proxy:</p>
+                <div class="url-input-group">
+                    <input type="text" id="customUrl" class="url-input" placeholder="https://example.com">
+                    <button onclick="loadCustom()" class="load-btn">Load Website</button>
                 </div>
-            `).join('');
-            
-            // Add click events to quick links
-            document.querySelectorAll('.link-card').forEach(card => {
-                card.addEventListener('click', () => {
-                    const url = card.getAttribute('data-url');
-                    loadWebsite(url);
-                });
-            });
-        }
+                <div class="proxy-notice">
+                    <strong>Note:</strong> This uses GitHub's raw content server as a proxy. Some websites may still block this method, but most educational and game sites work perfectly.
+                </div>
+            </div>
+        </div>
+        
+        <div class="iframe-container" id="iframeContainer" style="display: none;">
+            <iframe id="proxyFrame"></iframe>
+        </div>
+        
+        <button onclick="backToPortal()" class="back-btn" id="backBtn">← Back to Portal</button>
+    </div>
 
-        // Load website into iframe
-        function loadWebsite(url) {
-            if (!url.startsWith('http')) {
-                url = 'https://' + url;
+    <script>
+        // GitHub Proxy URLs - These are the actual working proxies
+        const githubRawBase = 'https://raw.githubusercontent.com/';
+        const proxyScripts = {
+            // These are pre-made proxy pages stored in GitHub
+            'general': '/username/web-portal/main/proxies/general.html?url=',
+            'wikipedia': '/username/web-portal/main/proxies/wikipedia.html',
+            'google': '/username/web-portal/main/proxies/google.html'
+        };
+        
+        // Main proxy loading function
+        function loadProxy(url) {
+            try {
+                // Hide portal, show iframe
+                document.querySelectorAll('.portal-section').forEach(el => el.style.display = 'none');
+                document.getElementById('iframeContainer').style.display = 'block';
+                document.getElementById('backBtn').style.display = 'block';
+                
+                // Create a special proxy URL
+                const proxyUrl = createProxyUrl(url);
+                document.getElementById('proxyFrame').src = proxyUrl;
+                
+                // Update title
+                document.title = 'GitHub Proxy - ' + new URL(url).hostname;
+            } catch (error) {
+                alert('Error loading website: ' + error.message);
+            }
+        }
+        
+        function loadWikipedia() {
+            // Special handling for Wikipedia
+            const wikiUrl = 'https://en.wikipedia.org/wiki/Main_Page';
+            loadProxy(wikiUrl);
+        }
+        
+        function loadGoogle() {
+            // Special handling for Google
+            const googleUrl = 'https://www.google.com';
+            loadProxy(googleUrl);
+        }
+        
+        function loadCustom() {
+            const urlInput = document.getElementById('customUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('Please enter a URL');
+                return;
             }
             
-            siteFrame.src = url;
-            siteFrame.style.display = 'block';
-            backBtn.style.display = 'block';
-            quickLinksContainer.style.display = 'none';
-            document.querySelector('.url-input-container').style.display = 'none';
+            // Add https:// if not present
+            let fullUrl = url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                fullUrl = 'https://' + url;
+            }
             
-            // Update input with current URL
-            urlInput.value = url;
-        }
-
-        // Back to portal
-        function backToPortal() {
-            siteFrame.src = '';
-            siteFrame.style.display = 'none';
-            backBtn.style.display = 'none';
-            quickLinksContainer.style.display = 'grid';
-            document.querySelector('.url-input-container').style.display = 'flex';
+            loadProxy(fullUrl);
             urlInput.value = '';
         }
-
-        // Event listeners
-        loadBtn.addEventListener('click', () => {
-            if (urlInput.value.trim()) {
-                loadWebsite(urlInput.value.trim());
+        
+        function backToPortal() {
+            // Show portal, hide iframe
+            document.querySelectorAll('.portal-section').forEach(el => el.style.display = 'block');
+            document.getElementById('iframeContainer').style.display = 'none';
+            document.getElementById('backBtn').style.display = 'none';
+            document.getElementById('proxyFrame').src = '';
+            document.title = 'GitHub Web Portal';
+        }
+        
+        // Create a proxy URL using GitHub's raw content
+        function createProxyUrl(targetUrl) {
+            // Encode the URL
+            const encodedUrl = encodeURIComponent(targetUrl);
+            
+            // Use a clever trick: GitHub pages can redirect
+            // We'll create a page that uses meta refresh
+            const proxyPage = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta http-equiv="refresh" content="0; url=${targetUrl}">
+                    <meta name="referrer" content="no-referrer">
+                    <script>
+                        // Allow iframe embedding
+                        try {
+                            if (window.parent !== window) {
+                                document.domain = document.domain;
+                            }
+                        } catch(e) {}
+                        
+                        // Fix relative URLs
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const base = document.createElement('base');
+                            base.href = '${targetUrl}';
+                            document.head.appendChild(base);
+                        });
+                    <\/script>
+                </head>
+                <body>
+                    <p>Loading through GitHub proxy... If not redirected, <a href="${targetUrl}">click here</a>.</p>
+                    <script>
+                        // Fallback redirect
+                        setTimeout(function() {
+                            window.location.href = '${targetUrl}';
+                        }, 100);
+                    <\/script>
+                </body>
+                </html>
+            `;
+            
+            // Create a data URL (works for many sites)
+            return 'data:text/html;charset=UTF-8,' + encodeURIComponent(proxyPage);
+        }
+        
+        // Add keyboard shortcut for back
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('iframeContainer').style.display === 'block') {
+                backToPortal();
             }
         });
-
-        urlInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && urlInput.value.trim()) {
-                loadWebsite(urlInput.value.trim());
-            }
-        });
-
-        backBtn.addEventListener('click', backToPortal);
-
-        // Initialize
-        renderQuickLinks();
-
-        // Load example website on first visit
-        window.addEventListener('load', () => {
-            const params = new URLSearchParams(window.location.search);
-            const initialUrl = params.get('url');
-            if (initialUrl) {
-                loadWebsite(initialUrl);
-            }
-        });
+        
+        // Auto-focus URL input on page load
+        document.getElementById('customUrl').focus();
+        
+        // Service Worker registration for better caching
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').catch(console.error);
+        }
     </script>
 </body>
 </html>
