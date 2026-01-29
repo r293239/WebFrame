@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Website Frame Loader</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .controls {
+      padding: 10px;
+      background: #f2f2f2;
+      border-bottom: 1px solid #ccc;
+    }
+
+    button {
+      margin-right: 8px;
+      padding: 6px 12px;
+      cursor: pointer;
+    }
+
+    iframe {
+      width: 100%;
+      height: calc(100vh - 50px);
+      border: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls">
+    <button onclick="loadSite('https://example.com')">Example</button>
+    <button onclick="loadSite('https://wikipedia.org')">Wikipedia</button>
+    <button onclick="loadSite('https://r293239.github.io/Geodle/')">Geodle</button>
+  </div>
+
+  <iframe id="frame" src="https://example.com"></iframe>
+
+  <script>
+    function loadSite(url) {
+      document.getElementById('frame').src = url;
+    }
+  </script>
+
+</body>
+</html>
