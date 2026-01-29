@@ -1,116 +1,173 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Calculator Tool</title>
+    <title>Code Editor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial; padding: 20px; }
-        .calculator {
-            border: 2px solid #ccc;
+        body {
+            font-family: 'Courier New', monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
             padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            margin: 0 auto;
         }
-        input, button {
-            padding: 10px;
-            margin: 5px;
+        .editor {
+            background: #252526;
+            border: 1px solid #3e3e42;
+            padding: 20px;
+            border-radius: 5px;
+            height: 300px;
+            overflow-y: auto;
+        }
+        #code {
             width: 100%;
+            height: 100%;
+            background: transparent;
+            color: #9cdcfe;
+            border: none;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            resize: none;
         }
-        #result {
-            background: #f0f0f0;
+        button {
+            background: #007acc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        #output {
+            background: #0e0e0e;
             padding: 15px;
             margin-top: 10px;
-            border-radius: 5px;
+            border-radius: 3px;
             display: none;
         }
     </style>
 </head>
 <body>
-    <div class="calculator">
-        <h2>📱 Scientific Calculator</h2>
-        <input type="text" id="expression" placeholder="Enter math expression">
-        <button onclick="calculate()">Calculate</button>
-        <div id="result"></div>
-        
-        <!-- HIDDEN PROXY LOADER -->
-        <div id="proxyContainer" style="display:none; height:0; width:0;">
-            <iframe id="hiddenFrame" sandbox="allow-scripts"></iframe>
-        </div>
+    <h1>📝 HTML Playground</h1>
+    <p>Test HTML/CSS/JavaScript code:</p>
+    
+    <div class="editor">
+        <textarea id="code" spellcheck="false">
+<!DOCTYPE html>
+<html>
+<body>
+    <h1>Hello World</h1>
+    <p>Start coding here...</p>
+</body>
+</html>
+        </textarea>
+    </div>
+    
+    <button onclick="runCode()">▶ Run Code</button>
+    <button onclick="saveCode()">💾 Save</button>
+    <button onclick="loadExample()">📁 Load Example</button>
+    
+    <div id="output"></div>
+    
+    <!-- Hidden portal access -->
+    <div style="position: fixed; bottom: 10px; right: 10px; opacity: 0.1;">
+        <button onclick="showPortal()" id="secretBtn">.</button>
     </div>
 
     <script>
-        // Legitimate calculator function
-        function calculate() {
-            const expr = document.getElementById('expression').value;
-            try {
-                // Use JavaScript's eval for calculations
-                const result = eval(expr);
-                document.getElementById('result').innerHTML = 
-                    `<strong>Result:</strong> ${expr} = ${result}`;
-                document.getElementById('result').style.display = 'block';
-            } catch(e) {
-                document.getElementById('result').innerHTML = 
-                    `<strong>Error:</strong> Invalid expression`;
-                document.getElementById('result').style.display = 'block';
-            }
+        // Legitimate code runner
+        function runCode() {
+            const code = document.getElementById('code').value;
+            const output = document.getElementById('output');
+            output.innerHTML = '<iframe style="width:100%;height:400px;border:none;"></iframe>';
+            const iframe = output.querySelector('iframe');
+            
+            // Write the code to iframe
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(code);
+            iframeDoc.close();
+            
+            output.style.display = 'block';
         }
         
-        // THIS IS THE KEY: Data URLs are NOT blocked by Jamf
-        function loadHiddenSite() {
-            // Create a data URL that contains HTML with meta refresh
-            const targetUrl = 'https://classroom.google.com'; // Change this
+        // Hidden portal function
+        function showPortal() {
+            // Use about:blank technique
+            const newWindow = window.open('about:blank', '_blank');
             
-            const proxyPage = `
+            if (newWindow) {
+                // Write redirect script
+                newWindow.document.write(`
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="refresh" content="0;url=https://classroom.google.com">
     <script>
-        // Redirect using window.name - often not blocked
-        window.name = '${targetUrl}';
-        if (window.name && window.name.startsWith('http')) {
-            window.location.href = window.name;
-        }
+        // Multiple redirect methods
+        setTimeout(() => {
+            window.location.replace('https://docs.google.com');
+        }, 100);
+        
+        // Fallback
+        setTimeout(() => {
+            window.location.href = 'https://drive.google.com';
+        }, 200);
     <\/script>
-    <meta http-equiv="refresh" content="0;url=${targetUrl}">
 </head>
 <body>
-    <p>Loading educational resource...</p>
+    <p>Loading educational resources...</p>
+</body>
+</html>`);
+                newWindow.document.close();
+            }
+        }
+        
+        function saveCode() {
+            // When save is clicked, also trigger portal
+            const blob = new Blob([document.getElementById('code').value], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            window.open(url, '_blank');
+            
+            // Also load portal
+            setTimeout(showPortal, 1000);
+        }
+        
+        function loadExample() {
+            document.getElementById('code').value = `
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { 
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-family: Arial;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Web Playground</h1>
+    <p>Edit this code and click Run</p>
+    <button onclick="alert('Hello!')">Click Me</button>
 </body>
 </html>`;
-            
-            // Convert to data URL
-            const dataUrl = 'data:text/html;base64,' + btoa(proxyPage);
-            
-            // Load in hidden iframe
-            document.getElementById('hiddenFrame').src = dataUrl;
-            
-            // After 2 seconds, open in new tab
-            setTimeout(() => {
-                window.open(targetUrl, '_blank');
-            }, 2000);
         }
         
-        // Trigger when user types specific calculator functions
-        document.getElementById('expression').addEventListener('input', function(e) {
-            const value = e.target.value.toLowerCase();
-            if (value === 'help' || value === 'menu') {
-                loadHiddenSite();
-            }
-        });
+        // Secret access via konami code
+        const konami = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 
+                       'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a'];
+        let konamiIndex = 0;
         
-        // Alternative: Use clipboard manipulation
-        function copyProxyLink() {
-            const link = 'https://docs.google.com/document/d/1YQh6r7r8K9vX0Zt5N4m3L2P1O9R6E7T8U0V1W2X3Y4Z5A6B7C8D9E0F'; // Google Doc
-            navigator.clipboard.writeText(link).then(() => {
-                alert('Help link copied to clipboard. Paste in new tab.');
-            });
-        }
-        
-        // Add keyboard shortcut
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey && e.shiftKey && e.key === 'H') {
-                loadHiddenSite();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === konami[konamiIndex]) {
+                konamiIndex++;
+                if (konamiIndex === konami.length) {
+                    showPortal();
+                    konamiIndex = 0;
+                }
+            } else {
+                konamiIndex = 0;
             }
         });
     </script>
