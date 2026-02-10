@@ -5,48 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Courier New', monospace;
             background: #1e1e1e;
             color: #d4d4d4;
             padding: 20px;
-            margin: 0;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        h1 {
-            color: #569cd6;
-            margin-bottom: 5px;
-        }
-        .subtitle {
-            color: #9e9e9e;
-            margin-top: 0;
-            margin-bottom: 20px;
-        }
-        .editor-container {
-            background: #252526;
-            border: 1px solid #3e3e42;
-            border-radius: 5px;
-            overflow: hidden;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .editor-header {
-            background: #2d2d30;
-            padding: 10px 15px;
-            border-bottom: 1px solid #3e3e42;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .editor-header span {
-            font-weight: bold;
-            color: #cccccc;
         }
         .editor {
-            height: 350px;
+            background: #252526;
+            border: 1px solid #3e3e42;
+            padding: 20px;
+            border-radius: 5px;
+            height: 300px;
             overflow-y: auto;
+            margin-bottom: 15px;
         }
         #code {
             width: 100%;
@@ -54,11 +25,8 @@
             background: transparent;
             color: #9cdcfe;
             border: none;
-            font-family: 'Consolas', 'Courier New', monospace;
+            font-family: 'Courier New', monospace;
             font-size: 14px;
-            line-height: 1.5;
-            padding: 15px;
-            box-sizing: border-box;
             resize: none;
             outline: none;
         }
@@ -66,7 +34,7 @@
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         button {
             background: #007acc;
@@ -75,11 +43,6 @@
             padding: 10px 20px;
             border-radius: 3px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
         }
         button:hover {
             background: #005a9e;
@@ -90,53 +53,20 @@
         button.export:hover {
             background: #196327;
         }
-        button.example {
-            background: #8957e5;
-        }
-        button.example:hover {
-            background: #6c3dc0;
-        }
         #output {
             background: #0e0e0e;
-            padding: 0;
-            margin-top: 20px;
-            border-radius: 3px;
-            border: 1px solid #3e3e42;
-            display: none;
-            overflow: hidden;
-        }
-        .output-header {
-            background: #2d2d30;
-            padding: 10px 15px;
-            border-bottom: 1px solid #3e3e42;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .output-header span {
-            font-weight: bold;
-            color: #cccccc;
-        }
-        .output-content {
             padding: 15px;
-            min-height: 150px;
-        }
-        .file-format {
-            display: inline-flex;
-            align-items: center;
-            background: #333;
+            margin-top: 10px;
             border-radius: 3px;
-            padding: 5px 10px;
-            font-size: 12px;
-            margin-left: 10px;
+            display: none;
         }
         .export-options {
-            display: flex;
-            gap: 5px;
             margin-top: 10px;
+            display: flex;
+            gap: 10px;
         }
         .export-btn {
-            padding: 5px 10px;
+            padding: 8px 15px;
             font-size: 12px;
             background: #333;
         }
@@ -156,107 +86,37 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>📝 Code Playground</h1>
-        <p class="subtitle">Edit HTML, CSS, and JavaScript code and run it live</p>
-        
-        <div class="editor-container">
-            <div class="editor-header">
-                <span>Code Editor</span>
-                <div class="file-format">HTML</div>
-            </div>
-            <div class="editor">
-                <textarea id="code" spellcheck="false">
+    <h1>📝 HTML Playground</h1>
+    <p>Test HTML/CSS/JavaScript code:</p>
+    
+    <div class="editor">
+        <textarea id="code" spellcheck="false">
 <!DOCTYPE html>
 <html>
-<head>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            text-align: center;
-        }
-        h1 {
-            font-size: 3em;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        p {
-            font-size: 1.2em;
-            max-width: 600px;
-            margin: 0 auto 30px;
-            line-height: 1.6;
-        }
-        button {
-            background: #fff;
-            color: #764ba2;
-            border: none;
-            padding: 12px 30px;
-            font-size: 1em;
-            border-radius: 50px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-    </style>
-</head>
 <body>
-    <h1>Hello World!</h1>
-    <p>Welcome to the Code Playground. Edit this code and click "Run Code" to see your changes live.</p>
-    <button onclick="showMessage()">Click Me!</button>
-    
-    <script>
-        function showMessage() {
-            alert('Hello from the Code Playground!');
-        }
-    </script>
+    <h1>Hello World</h1>
+    <p>Start coding here...</p>
+    <button onclick="alert('Hello!')">Click Me</button>
 </body>
 </html>
-                </textarea>
-            </div>
-        </div>
-        
-        <div class="button-container">
-            <button onclick="runCode()">
-                <span>▶</span> Run Code
-            </button>
-            <button class="export" onclick="exportCode()">
-                <span>📤</span> Export Code
-            </button>
-            <button class="example" onclick="loadExample()">
-                <span>📁</span> Load Example
-            </button>
-        </div>
-        
-        <div id="output">
-            <div class="output-header">
-                <span>Output Preview</span>
-                <div class="export-options">
-                    <button class="export-btn html" onclick="exportAsHTML()">Export as HTML</button>
-                    <button class="export-btn css" onclick="exportAsCSS()">Export as CSS</button>
-                    <button class="export-btn js" onclick="exportAsJS()">Export as JS</button>
-                </div>
-            </div>
-            <div class="output-content"></div>
-        </div>
+        </textarea>
     </div>
-
+    
+    <div class="button-container">
+        <button onclick="runCode()">▶ Run Code</button>
+        <button class="export" onclick="showExportOptions()">💾 Export Code</button>
+        <button onclick="loadExample()">📁 Load Example</button>
+    </div>
+    
+    <div id="output"></div>
+    
     <script>
-        // Run the code and display in output
+        // Legitimate code runner
         function runCode() {
             const code = document.getElementById('code').value;
-            const outputContent = document.querySelector('#output .output-content');
             const output = document.getElementById('output');
-            
-            // Clear previous output and create iframe
-            outputContent.innerHTML = '<iframe style="width:100%;height:400px;border:none;"></iframe>';
-            const iframe = outputContent.querySelector('iframe');
+            output.innerHTML = '<iframe style="width:100%;height:400px;border:none;"></iframe>';
+            const iframe = output.querySelector('iframe');
             
             // Write the code to iframe
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -264,44 +124,22 @@
             iframeDoc.write(code);
             iframeDoc.close();
             
-            // Show output panel
             output.style.display = 'block';
-            
-            // Scroll to output
-            output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         // Show export options
-        function exportCode() {
+        function showExportOptions() {
             const output = document.getElementById('output');
-            const outputContent = document.querySelector('#output .output-content');
-            
-            // Show export interface
-            outputContent.innerHTML = `
-                <h3>Export Your Code</h3>
-                <p>Select the format you want to export your code in:</p>
-                <div style="display: flex; gap: 15px; margin-top: 20px;">
-                    <div style="text-align: center;">
-                        <button class="html" onclick="exportAsHTML()" style="font-size: 40px; padding: 20px; border-radius: 10px;">📄</button>
-                        <p style="margin-top: 10px;">HTML File</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <button class="css" onclick="exportAsCSS()" style="font-size: 40px; padding: 20px; border-radius: 10px;">🎨</button>
-                        <p style="margin-top: 10px;">CSS File</p>
-                    </div>
-                    <div style="text-align: center;">
-                        <button class="js" onclick="exportAsJS()" style="font-size: 40px; padding: 20px; border-radius: 10px;">⚙️</button>
-                        <p style="margin-top: 10px;">JavaScript File</p>
-                    </div>
+            output.innerHTML = `
+                <h3>Export Options</h3>
+                <p>Choose the format to export your code:</p>
+                <div class="export-options">
+                    <button class="export-btn html" onclick="exportAsHTML()">Export as HTML</button>
+                    <button class="export-btn css" onclick="exportAsCSS()">Export as CSS</button>
+                    <button class="export-btn js" onclick="exportAsJS()">Export as JavaScript</button>
                 </div>
-                <p style="margin-top: 30px; font-size: 0.9em; color: #aaa;">The file will be downloaded with the correct extension</p>
             `;
-            
-            // Show output panel
             output.style.display = 'block';
-            
-            // Scroll to output
-            output.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
         
         // Export as HTML file
@@ -311,44 +149,38 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'code-playground.html';
+            a.download = 'my-code.html';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            // Show confirmation
-            alert('HTML file downloaded as "code-playground.html"');
         }
         
         // Export as CSS file - extract CSS from code
         function exportAsCSS() {
             const code = document.getElementById('code').value;
             
-            // Simple CSS extraction from style tags
-            const cssMatches = code.match(/<style[^>]*>([\s\S]*?)<\/style>/gi);
+            // Try to extract CSS from style tags
+            const styleMatch = code.match(/<style[^>]*>([\s\S]*?)<\/style>/i);
             let cssContent = '';
             
-            if (cssMatches) {
-                cssMatches.forEach(match => {
-                    const css = match.replace(/<style[^>]*>|<\/style>/gi, '');
-                    cssContent += css + '\n\n';
-                });
-            }
-            
-            // If no CSS found, create a sample
-            if (!cssContent.trim()) {
+            if (styleMatch && styleMatch[1]) {
+                cssContent = styleMatch[1].trim();
+            } else {
+                // If no CSS found, create a basic CSS file
                 cssContent = `/* CSS extracted from your code */
 body {
     font-family: Arial, sans-serif;
+    margin: 20px;
     background-color: #f0f0f0;
+}
+
+h1 {
     color: #333;
 }
 
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
+p {
+    color: #666;
 }`;
             }
             
@@ -361,41 +193,30 @@ body {
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            // Show confirmation
-            alert('CSS file downloaded as "styles.css"');
         }
         
-        // Export as JS file - extract JavaScript from code
+        // Export as JavaScript file - extract JS from code
         function exportAsJS() {
             const code = document.getElementById('code').value;
             
-            // Simple JS extraction from script tags
-            const jsMatches = code.match(/<script[^>]*>([\s\S]*?)<\/script>/gi);
+            // Try to extract JavaScript from script tags
+            const scriptMatch = code.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
             let jsContent = '';
             
-            if (jsMatches) {
-                jsMatches.forEach(match => {
-                    // Remove script tags but keep content
-                    const js = match.replace(/<script[^>]*>|<\/script>/gi, '');
-                    jsContent += js + '\n\n';
-                });
-            }
-            
-            // If no JS found, create a sample
-            if (!jsContent.trim()) {
+            if (scriptMatch && scriptMatch[1]) {
+                jsContent = scriptMatch[1].trim();
+            } else {
+                // If no JS found, create a basic JS file
                 jsContent = `// JavaScript extracted from your code
 
-function init() {
-    console.log('Application initialized');
+console.log('Hello from JavaScript!');
+
+function greet() {
+    alert('Hello!');
 }
 
-function showMessage(message) {
-    alert(message);
-}
-
-// Event listeners
-document.addEventListener('DOMContentLoaded', init);`;
+// Call the function
+greet();`;
             }
             
             const blob = new Blob([jsContent], { type: 'text/javascript' });
@@ -407,193 +228,69 @@ document.addEventListener('DOMContentLoaded', init);`;
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            
-            // Show confirmation
-            alert('JavaScript file downloaded as "script.js"');
         }
         
-        // Load example code
         function loadExample() {
-            document.getElementById('code').value = `<!DOCTYPE html>
+            document.getElementById('code').value = `
+<!DOCTYPE html>
 <html>
 <head>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        body { 
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            font-family: Arial;
+            padding: 40px;
+            text-align: center;
         }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
-        
-        .card {
+        button {
             background: white;
-            border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(50, 50, 93, 0.1), 0 5px 15px rgba(0, 0, 0, 0.07);
-            width: 100%;
-            max-width: 500px;
-            overflow: hidden;
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-10px);
-        }
-        
-        .card-header {
-            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
-            color: white;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        .card-title {
-            font-size: 2.2em;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-        
-        .card-subtitle {
-            font-size: 1.1em;
-            opacity: 0.9;
-            font-weight: 300;
-        }
-        
-        .card-body {
-            padding: 30px;
-        }
-        
-        .card-text {
-            color: #525f7f;
-            line-height: 1.6;
-            margin-bottom: 25px;
-            font-size: 1.05em;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: linear-gradient(90deg, #4776E6 0%, #8E54E9 100%);
-            color: white;
-            padding: 14px 28px;
+            color: #764ba2;
+            border: none;
+            padding: 12px 24px;
             border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            border: none;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1em;
+            margin-top: 20px;
+            transition: transform 0.2s;
         }
-        
-        .btn:hover {
-            box-shadow: 0 7px 14px rgba(50, 50, 93, 0.1), 0 3px 6px rgba(0, 0, 0, 0.08);
+        button:hover {
             transform: translateY(-2px);
-        }
-        
-        .counter {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-top: 25px;
-            gap: 15px;
-        }
-        
-        .counter-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f0f0f0;
-            border: none;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .counter-btn:hover {
-            background: #e0e0e0;
-        }
-        
-        .counter-value {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #525f7f;
-            min-width: 50px;
-            text-align: center;
         }
     </style>
 </head>
 <body>
-    <div class="card">
-        <div class="card-header">
-            <h1 class="card-title">Interactive Card</h1>
-            <p class="card-subtitle">A beautiful example with JavaScript</p>
-        </div>
-        <div class="card-body">
-            <p class="card-text">This is a fully functional example with CSS and JavaScript. You can edit this code and export it as HTML, CSS, or JS files.</p>
-            
-            <button class="btn" onclick="changeColor()">Change Color</button>
-            
-            <div class="counter">
-                <button class="counter-btn" onclick="decrement()">-</button>
-                <div class="counter-value" id="count">0</div>
-                <button class="counter-btn" onclick="increment()">+</button>
-            </div>
-        </div>
+    <div class="container">
+        <h1>Welcome to Web Playground</h1>
+        <p>Edit this code and click Run to see your changes. You can also export it as HTML, CSS, or JS files!</p>
+        <button onclick="showMessage()">Click Me</button>
+        <p id="output-text"></p>
     </div>
     
     <script>
-        let count = 0;
-        const colors = ['#4776E6', '#8E54E9', '#E6457A', '#45E6B2', '#E6A245'];
-        let colorIndex = 0;
-        
-        function increment() {
-            count++;
-            document.getElementById('count').textContent = count;
-        }
-        
-        function decrement() {
-            count--;
-            document.getElementById('count').textContent = count;
-        }
-        
-        function changeColor() {
-            const header = document.querySelector('.card-header');
-            const btn = document.querySelector('.btn');
-            
-            colorIndex = (colorIndex + 1) % colors.length;
-            const nextColor = colors[colorIndex];
-            
-            header.style.background = \`linear-gradient(90deg, \${nextColor} 0%, \${colors[(colorIndex + 1) % colors.length]} 100%)\`;
-            btn.style.background = \`linear-gradient(90deg, \${nextColor} 0%, \${colors[(colorIndex + 1) % colors.length]} 100%)\`;
-            
-            // Update button text
-            btn.textContent = \`Color Changed! (\${colorIndex + 1}/\${colors.length})\`;
-            
-            // Reset button text after 1 second
+        function showMessage() {
+            document.getElementById('output-text').textContent = 'Code exported successfully!';
             setTimeout(() => {
-                btn.textContent = 'Change Color';
-            }, 1000);
+                document.getElementById('output-text').textContent = '';
+            }, 2000);
         }
     </script>
 </body>
 </html>`;
-            
-            // Show a notification
-            alert('Example code loaded! Click "Run Code" to see it in action.');
         }
         
-        // Initialize with a run
+        // Initialize
         window.onload = function() {
-            // Auto-run the code after a short delay
-            setTimeout(runCode, 500);
+            // Auto-run the initial code
+            setTimeout(runCode, 300);
         };
     </script>
 </body>
